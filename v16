@@ -5974,6 +5974,7 @@ function WMacLib:Window(Settings)
         digitRow.BackgroundTransparency = 1
         digitRow.BorderSizePixel = 0
         digitRow.Size = UDim2.fromScale(1, 0)
+        digitRow.Size = UDim2.new(1, 0, 0, DIGIT_H)
         digitRow.LayoutOrder = 4
         digitRow.Parent = profileSection
 
