@@ -6156,7 +6156,7 @@ local hideInfoState = false
             local expiry
             local start = os.clock()
             while os.clock() - start < 5 do
-                expiry = tonumber(rawget(getfenv and getfenv(0) or _G, "JD_EXPIRES_AT"))
+                expiry = tonumber((getgenv and getgenv() or _G)["JD_EXPIRES_AT"])
                 if expiry then break end
                 task.wait(0.1)
             end
@@ -7634,3 +7634,5 @@ function WMacLib:Demo()
 end
 
 return WMacLib
+
+print("hi")
