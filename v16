@@ -5827,7 +5827,7 @@ function WMacLib:Window(Settings)
         local issuesButton = Instance.new("TextButton")
         issuesButton.Name = "IssuesButton"
         issuesButton.FontFace = Font.new(assets.interFont, Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-        issuesButton.Text = "Experiencing an issue?"
+        issuesButton.Text = "Experiencing issues?"
         issuesButton.RichText = true
         issuesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         issuesButton.TextSize = 13
@@ -6155,8 +6155,8 @@ local hideInfoState = false
         task.spawn(function()
             local expiry
             local start = os.clock()
-            while os.clock() - start < 5 do
-                expiry = tonumber((getgenv and getgenv() or _G)["JD_EXPIRES_AT"])
+            while os.clock() - start < 15 do
+                expiry = tonumber(rawget(getfenv and getfenv(0) or _G, "JD_EXPIRES_AT")) or (getgenv and tonumber(getgenv().JD_EXPIRES_AT)) or tonumber(JD_EXPIRES_AT)
                 if expiry then break end
                 task.wait(0.1)
             end
