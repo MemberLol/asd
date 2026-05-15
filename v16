@@ -1,3 +1,13 @@
+local Junkie = loadstring(game:HttpGet("https://jnkie.com/sdk/library.lua"))()
+Junkie.service = "Larp Ware"
+Junkie.identifier = "3523"
+Junkie.provider = "Larp Ware Provider"
+task.defer(function()
+    if getgenv and JD_EXPIRES_AT ~= nil then
+        getgenv().JD_EXPIRES_AT = JD_EXPIRES_AT
+    end
+end)
+
 local WMacLib = { 
 	Options = {}, 
 	Folder = "LarpWare", 
@@ -6156,7 +6166,7 @@ local hideInfoState = false
             local expiry
             local start = os.clock()
             while os.clock() - start < 15 do
-                expiry = tonumber(rawget(getfenv and getfenv(0) or _G, "JD_EXPIRES_AT")) or (getgenv and tonumber(getgenv().JD_EXPIRES_AT)) or tonumber(JD_EXPIRES_AT)
+                expiry = (getgenv and tonumber(getgenv().JD_EXPIRES_AT)) or tonumber(rawget(_G, "JD_EXPIRES_AT")) or tonumber(JD_EXPIRES_AT)
                 if expiry then break end
                 task.wait(0.1)
             end
