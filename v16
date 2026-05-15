@@ -7634,5 +7634,3 @@ function WMacLib:Demo()
 end
 
 return WMacLib
-
-print("hi")
