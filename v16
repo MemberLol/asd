@@ -5837,7 +5837,7 @@ function WMacLib:Window(Settings)
         local issuesButton = Instance.new("TextButton")
         issuesButton.Name = "IssuesButton"
         issuesButton.FontFace = Font.new(assets.interFont, Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-        issuesButton.Text = "Experiencing issues?"
+        issuesButton.Text = "Experiencing issues"
         issuesButton.RichText = true
         issuesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         issuesButton.TextSize = 13
@@ -5975,6 +5975,7 @@ function WMacLib:Window(Settings)
         digitRow.BorderSizePixel = 0
         digitRow.Size = UDim2.fromScale(1, 0)
         digitRow.Size = UDim2.new(1, 0, 0, DIGIT_H)
+        digitRow.ClipsDescendants = true
         digitRow.LayoutOrder = 4
         digitRow.Parent = profileSection
 
@@ -5996,6 +5997,7 @@ function WMacLib:Window(Settings)
             clip.BorderSizePixel = 0
             clip.ClipsDescendants = true
             clip.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
+            clip.ClipsDescendants = true
             clip.LayoutOrder = order
             clip.Parent = digitRow
             return clip
@@ -6058,6 +6060,7 @@ function WMacLib:Window(Settings)
             new.BorderSizePixel = 0
             new.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
             new.Position = UDim2.fromOffset(0, -DIGIT_H)
+            new.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
             new.Parent = clip
 
             TweenService:Create(new, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
