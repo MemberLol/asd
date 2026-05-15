@@ -5827,7 +5827,7 @@ function WMacLib:Window(Settings)
         local issuesButton = Instance.new("TextButton")
         issuesButton.Name = "IssuesButton"
         issuesButton.FontFace = Font.new(assets.interFont, Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-        issuesButton.Text = "Experiencing issues?"
+        issuesButton.Text = "Experiencing an issue?"
         issuesButton.RichText = true
         issuesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         issuesButton.TextSize = 13
