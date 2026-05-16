@@ -5837,7 +5837,7 @@ function WMacLib:Window(Settings)
         local issuesButton = Instance.new("TextButton")
         issuesButton.Name = "IssuesButton"
         issuesButton.FontFace = Font.new(assets.interFont, Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
-        issuesButton.Text = "Experiencing issues?"
+        issuesButton.Text = "Experiencing issues"
         issuesButton.RichText = true
         issuesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         issuesButton.TextSize = 13
@@ -5970,7 +5970,7 @@ function WMacLib:Window(Settings)
 
         local digitRow = Instance.new("Frame")
         digitRow.Name = "DigitRow"
-        digitRow.AutomaticSize = Enum.AutomaticSize.Y
+        digitRow.AutomaticSize = Enum.AutomaticSize.None
         digitRow.BackgroundTransparency = 1
         digitRow.BorderSizePixel = 0
         digitRow.Size = UDim2.fromScale(1, 0)
