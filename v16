@@ -5970,12 +5970,10 @@ function WMacLib:Window(Settings)
 
         local digitRow = Instance.new("Frame")
         digitRow.Name = "DigitRow"
-        digitRow.AutomaticSize = Enum.AutomaticSize.None
+        digitRow.AutomaticSize = Enum.AutomaticSize.Y
         digitRow.BackgroundTransparency = 1
         digitRow.BorderSizePixel = 0
         digitRow.Size = UDim2.fromScale(1, 0)
-        digitRow.Size = UDim2.new(1, 0, 0, 32)
-        digitRow.ClipsDescendants = true
         digitRow.LayoutOrder = 4
         digitRow.Parent = profileSection
 
@@ -5997,7 +5995,6 @@ function WMacLib:Window(Settings)
             clip.BorderSizePixel = 0
             clip.ClipsDescendants = true
             clip.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
-            clip.ClipsDescendants = true
             clip.LayoutOrder = order
             clip.Parent = digitRow
             return clip
@@ -6060,7 +6057,6 @@ function WMacLib:Window(Settings)
             new.BorderSizePixel = 0
             new.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
             new.Position = UDim2.fromOffset(0, -DIGIT_H)
-            new.Size = UDim2.fromOffset(DIGIT_W, DIGIT_H)
             new.Parent = clip
 
             TweenService:Create(new, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -6169,7 +6165,7 @@ local hideInfoState = false
         task.spawn(function()
             local expiry
             local start = os.clock()
-            while os.clock() - start < 3 do
+            while os.clock() - start < 15 do
                 expiry = (getgenv and tonumber(getgenv().JD_EXPIRES_AT)) or tonumber(rawget(_G, "JD_EXPIRES_AT")) or tonumber(JD_EXPIRES_AT)
                 if expiry then break end
                 task.wait(0.1)
