@@ -1,3 +1,13 @@
+local Junkie = loadstring(game:HttpGet("https://jnkie.com/sdk/library.lua"))()
+Junkie.service = "Larp Ware"
+Junkie.identifier = "3523"
+Junkie.provider = "Larp Ware Provider"
+task.defer(function()
+    if getgenv and JD_EXPIRES_AT ~= nil then
+        getgenv().JD_EXPIRES_AT = JD_EXPIRES_AT
+    end
+end)
+
 local WMacLib = { 
 	Options = {}, 
 	Folder = "LarpWare", 
