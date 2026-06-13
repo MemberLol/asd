@@ -34,9 +34,9 @@ local WMacLib = {
 				cb(name)
 			end
 			pcall(function()
-				if not isfolder("Phantom") then makefolder("Phantom") end
-				if not isfolder("Phantom/settings") then makefolder("Phantom/settings") end
-				writefile("Phantom/settings/theme.txt", name)
+                if not isfolder(WMacLib.Folder) then makefolder(WMacLib.Folder) end
+				if not isfolder(WMacLib.Folder .. "/settings") then makefolder(WMacLib.Folder .. "/settings") end
+				writefile(WMacLib.Folder .. "/settings/theme.txt", name)
 			end)
 		end
 	end,
@@ -1305,9 +1305,10 @@ function WMacLib:Window(Settings)
 	globalSettingsUIListLayout.Parent = globalSettings
 
 	local globalSettingsUIScale = Instance.new("UIScale")
-	globalSettingsUIScale.Name = "GlobalSettingsUIScale"
-	globalSettingsUIScale.Scale = 1e-07
-	globalSettingsUIScale.Parent = globalSettings
+    globalSettingsUIScale.Name = "GlobalSettingsUIScale"
+    globalSettingsUIScale.Scale = 1e-07
+    globalSettingsUIScale.Parent = globalSettings
+    globalSettingsUIScale.Scale = 1e-07
 	globalSettings.Parent = base
 	base.Parent = macLib
 
@@ -1329,6 +1330,7 @@ function WMacLib:Window(Settings)
 
 	local hovering
 	local toggled = globalSettingsUIScale.Scale == 1 and true or false
+    local toggled = false
 	local function toggle()
 		if not toggled then
 			local intween = Tween(globalSettingsUIScale, TweenInfo.new(0.2, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {
@@ -6134,10 +6136,11 @@ function WMacLib:Window(Settings)
 
         local digitRow = Instance.new("Frame")
         digitRow.Name = "DigitRow"
-        digitRow.AutomaticSize = Enum.AutomaticSize.Y
+        digitRow.AutomaticSize = Enum.AutomaticSize.None
         digitRow.BackgroundTransparency = 1
         digitRow.BorderSizePixel = 0
-        digitRow.Size = UDim2.fromScale(1, 0)
+        digitRow.Size = UDim2.new(1, 0, 0, 32)
+        digitRow.ClipsDescendants = true
         digitRow.LayoutOrder = 4
         digitRow.Parent = profileSection
 
@@ -7033,7 +7036,12 @@ local hideInfoState = false
 			end,
 			Load = function(Flag, data)
 				if WMacLib.Options[Flag] and data.value then
-					WMacLib.Options[Flag]:UpdateValue(data.value)
+					local opt = WMacLib.Options[Flag]
+					local raw = tonumber(data.value)
+					if raw and opt.Settings then
+						raw = math.clamp(raw, opt.Settings.Minimum or -math.huge, opt.Settings.Maximum or math.huge)
+					end
+					opt:UpdateValue(tostring(raw or data.value))
 				end
 			end
 		},
@@ -7110,15 +7118,18 @@ local hideInfoState = false
 	function WMacLib:LoadAutoLoadConfig()
 		if isStudio or not (isfile and readfile) then return "Config system unavailable." end
 
-		if isfile(WMacLib.Folder .. "/configs/autoload.txt") then
-			local name = readfile(WMacLib.Folder .. "/configs/autoload.txt")
+		local autoloadFile = WMacLib.Folder .. "/configs/autoload.txt"
+		if isfile(autoloadFile) then
+			local name = readfile(autoloadFile):gsub("%.json$", ""):gsub("^%s+", ""):gsub("%s+$", "")
+			if name == "" then return end
 
 			local suc, err = WMacLib:LoadConfig(name)
 			if not suc then
 				WindowFunctions:Notify({
 					Title = "Interface",
-					Description = "Error loading autoload config: " .. err
+					Description = "Error loading autoload config: " .. tostring(err)
 				})
+				return
 			end
 
 			WindowFunctions:Notify({
@@ -7136,13 +7147,14 @@ local hideInfoState = false
 	end
 
 	function WMacLib:SaveConfig(Path)
-		if isStudio or not writefile then return "Config system unavailable." end
+		if isStudio or not writefile then return false, "Config system unavailable." end
 
-		if (not Path) then
+		if (not Path) or Path == "" then
 			return false, "Please select a config file."
 		end
 
-		local fullPath = WMacLib.Folder .. "/configs/" .. Path .. ".json"
+		local cleanPath = Path:gsub("%.json$", "")
+		local fullPath = WMacLib.Folder .. "/configs/" .. cleanPath .. ".json"
 
 		local data = {
 			objects = {}
@@ -7165,17 +7177,21 @@ local hideInfoState = false
 	end
 
 	function WMacLib:LoadConfig(Path)
-		if isStudio or not (isfile and readfile) then return "Config system unavailable." end
+		if isStudio or not (isfile and readfile) then return false, "Config system unavailable." end
 
-		if (not Path) then
+		if (not Path) or Path == "" then
 			return false, "Please select a config file."
 		end
 
-		local file = WMacLib.Folder .. "/configs/" .. Path .. ".json"
-        if not isfile(file) then return false, "Invalid file" end
+		local cleanPath = Path:gsub("%.json$", "")
+		local file = WMacLib.Folder .. "/configs/" .. cleanPath .. ".json"
+        if not isfile(file) then return false, "Invalid file: " .. file end
 
-		local success, decoded = pcall(HttpService.JSONDecode, HttpService, readfile(file))
+		local rawData = readfile(file)
+		if not rawData or rawData == "" then return false, "Config file is empty." end
+		local success, decoded = pcall(HttpService.JSONDecode, HttpService, rawData)
 		if not success then return false, "Unable to decode JSON data." end
+		if not decoded or not decoded.objects then return false, "Config has no objects table." end
 
 		for _, option in next, decoded.objects do
 			if ClassParser[option.type] then
@@ -7224,14 +7240,15 @@ local hideInfoState = false
     end
 
     function WMacLib:DeleteConfig(Path)
-        if isStudio or not delfile then return "Config system unavailable." end
+        if isStudio or not delfile then return false, "Config system unavailable." end
 
-        if (not Path) then
+        if (not Path) or Path == "" then
             return false, "Please select a config file."
         end
 
-        local file = WMacLib.Folder .. "/configs/" .. Path .. ".json"
-        if not isfile(file) then return false, "Invalid file" end
+        local cleanPath = Path:gsub("%.json$", "")
+        local file = WMacLib.Folder .. "/configs/" .. cleanPath .. ".json"
+        if not isfile(file) then return false, "Invalid file: " .. file end
         
         delfile(file)
         return true
@@ -7241,8 +7258,8 @@ local hideInfoState = false
 	windowState = true
 
 	pcall(function()
-		if isfile and isfile("Phantom/settings/theme.txt") then
-			local saved = readfile("Phantom/settings/theme.txt")
+		if isfile and isfile(WMacLib.Folder .. "/settings/theme.txt") then
+			local saved = readfile(WMacLib.Folder .. "/settings/theme.txt")
 			if WMacLib.Themes[saved] then
 				WMacLib.CurrentTheme = saved
 				for _, cb in ipairs(WMacLib.themeCallbacks) do
